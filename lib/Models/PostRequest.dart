@@ -37,5 +37,5 @@ class PostRequest {
       throw Exception("failed to load json");
     }
   }
-  
+
 }
