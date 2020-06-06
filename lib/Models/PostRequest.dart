@@ -1,3 +1,4 @@
+import 'package:PersonalAssistantApp/Models/Constants.dart';
 import 'package:PersonalAssistantApp/Models/Parameters/PostParameters.dart';
 import 'package:PersonalAssistantApp/Models/Responses/SchedulePostResponse.dart';
 import 'package:PersonalAssistantApp/Models/Responses/SuggestPostResponse.dart';
@@ -8,7 +9,7 @@ class PostRequest {
 
   static Future<SchedulePostResponse> schedule(PostParameters params) async {
     var res = await http.post(
-      'http://127.0.0.1:8094/schedule',
+      Constants.API_SCHEDULE,
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -24,7 +25,7 @@ class PostRequest {
 
   static Future<SuggestPostResponse> suggest(PostParameters params) async {
     var res = await http.post(
-        'http://127.0.0.1:8094/suggest',
+        Constants.API_SUGGEST,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

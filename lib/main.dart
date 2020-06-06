@@ -1,117 +1,446 @@
+import 'package:PersonalAssistantApp/Models/GetRequests.dart';
+import 'package:PersonalAssistantApp/Models/Responses/ScheduleGetResponse.dart';
 import 'package:flutter/material.dart';
+import 'View/calendar.dart';
+import 'View/createTask.dart';
+import 'View/dashboard.dart';
+import 'View/miniapps.dart';
+import 'Models/Event.dart';
+
+import 'package:toast/toast.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(
+    MaterialApp(
+      title: 'Quinoa',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(primaryColor: Colors.grey[900]),
+      home: CorePage()));
 }
 
-class MyApp extends StatelessWidget {
+class CorePage extends StatefulWidget {
   // This widget is the root of your application.
+  createState() => CorePageState();
+}
+
+class CorePageState extends State<CorePage> {
+  int _currentDisplayIndex = 0;
+  List<Widget> screens = [MyHomePage(), CalendarPage(), DashboardPage(), MiniApps()];
+
+  void onTapNav(int index) {
+    setState(() { _currentDisplayIndex = index; });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return Scaffold(
+        bottomNavigationBar: BottomNavigationBar(
+          onTap:  (int i) => onTapNav(i),
+        type : BottomNavigationBarType.fixed,
+        backgroundColor: Colors.grey[900],
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.grey[300],
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        currentIndex: 0,
+        items: [
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.inbox),
+            title: new Text('Now'),
+          ),
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.calendar_today),
+            title: new Text('Calendar'),
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard), title: Text('Dashboard')),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.reorder), title: Text('Mini Apps')),
+          
+        ],
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+        body: screens[_currentDisplayIndex]
+      );
   }
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+ List<Color> sequence = [Colors.blue, Colors.teal, Colors.orange, Colors.green];
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
+class _MyHomePageState extends State<MyHomePage> { 
+
+ void initState() {
+   super.initState();
+
+   schedule = GetRequests.schedule();
+ }
+
+ Future<ScheduleGetResponse> schedule;
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
+      backgroundColor: Colors.grey[900],
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+        title: Text('Quinoa'),
+        leading: IconButton(
+          icon: Icon(
+            Icons.account_circle,
+            color: Colors.white,
+          ),
+          onPressed: () {},
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.notifications_active,
+              color: Colors.white,
+            ),
+            onPressed: () {},
+          )
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      body: Container(
+        child: ListView.builder(
+
+            itemBuilder: (context, index) {
+
+          if (index == 0) {
+            return _generateWelcomeMessage('Yash T');
+          } else if (index == 1) {
+            return _generateTextBox();
+          } else if (index == 2) {
+            return _generateSuggestionsHeader();
+          } else if (index == 3) {
+            return _generateSuggestionsView();
+          } else if (index == 4) {
+            return _generateEventsHeader();
+          } else if (index == 5) {
+            return loadEventsList(context, schedule);
+          }
+//            return generateEventsCard(
+//                'Hackathon Planning Meeting',
+//                '4:00 PM',
+//                'Discussing what we need to do for Hack the North and planning some epic project ideas',
+//                ['Aaditya Chaudhary', "Desgroup Whatley", 'Lunarcoffee Gao'], sequence[index%4], '2 hours');
+//        } else if (index == 6) {
+//            return generateEventsCard(
+//                'Planning Adi\'s Destruction',
+//                '6:30 PM',
+//                'Discussing how to destroy Adi\'s entire career before it even started',
+//                [ "Desgroup Whatley", 'Lunarcoffee Gao'], sequence[index%4], '1 hour');
+//          }
+        }),
+      ),
+      
     );
   }
+
+  Widget _generateWelcomeMessage(String name) {
+    return Container(
+      height: 100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
+            child: Text(
+              'Good morning $name!',
+              style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
+            child: Text(
+              'Friday, June 5, 2020',
+              style: TextStyle(fontSize: 20, color: Colors.white70),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  bool switched = false;
+
+ void onChanged(String text) {
+    if (!switched) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTaskPage()));
+    }
+ }
+  
+  Widget _generateTextBox() {
+    return Hero(
+      tag: 'TXT',
+      child: Container(
+      margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
+      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+      decoration: BoxDecoration(
+          color: Colors.grey[800],
+          borderRadius: BorderRadius.all(Radius.circular(10))),
+        child: TextField(
+          onChanged: (text) => onChanged(text),
+        style: TextStyle(color: Colors.white),
+        decoration: InputDecoration(
+          fillColor: Colors.grey[800],
+          focusColor: Colors.grey[800],
+          border: InputBorder.none,
+          hintText: 'What would you like to schedule?',
+          hintStyle: TextStyle(color: Colors.white70),
+        ),
+      ),
+    ),
+    );
+  }
+
+  Widget _generateSuggestionsHeader() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 20),
+      child: Text(
+        'Suggested Activities',
+        style: TextStyle(
+            color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+      ),
+    );
+  }
+
+  Widget _generateSuggestionsView() {
+    return Container(
+      margin: EdgeInsets.only(left: 20),
+      height: 170,
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) {
+            if (index == 0) {
+              return _generateSuggestionCard(
+                  "Do Some Excercise",
+                  "1500/10000 Steps Completed",
+                  Colors.blue,
+                  Icons.directions_run);
+            } else if (index == 1) {
+              return _generateSuggestionCard("Practice Guitar",
+                  "0/30 Minutes Completed", Colors.teal, Icons.music_note);
+            } else if (index == 2) {
+              return _generateSuggestionCard(
+                  "Book a Vacation",
+                  "All inclusive packages from \$300",
+                  Colors.orange,
+                  Icons.flight_takeoff);
+            } else if (index == 3) {
+              return _generateSuggestionCard(
+                  "Review your budget",
+                  "Make sure you stay on track!",
+                  Colors.green,
+                  Icons.credit_card);
+            }
+          }),
+    );
+  }
+
+  Widget _generateSuggestionCard(
+      String title, String info, Color color, IconData icon) {
+    return Container(
+      height: 150,
+      width: 150,
+      decoration: BoxDecoration(
+          color: color, borderRadius: BorderRadius.all(Radius.circular(10))),
+      margin: EdgeInsets.fromLTRB(0, 0, 20, 0),
+      padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            color: Colors.white,
+          ),
+          Spacer(),
+          Container(
+            child: Text(
+              title,
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18.0),
+            ),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+          ),
+          Text(
+            info,
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14.0),
+            textAlign: TextAlign.start,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _generateEventsHeader() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(20, 30, 20, 40),
+      child: Text(
+        'Upcoming Events',
+        style: TextStyle(
+            color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20),
+      ),
+    );
+  }
+
 }
+
+Widget generateEventsCard(String title, String time, String note, List<String> participants, Color color, String duration) {
+    return Container(
+      margin: EdgeInsets.fromLTRB(0, 0, 0, 30),
+        height: 180,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white70,
+                    borderRadius: BorderRadius.all(Radius.circular(5))
+                  ),
+                  width: 2,
+                  height: 70,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                ),
+                Text(
+                  time,
+                  style: TextStyle(color: Colors.white),
+                ),
+                Container(
+                 decoration: BoxDecoration(
+                    color: Colors.white70,
+                    borderRadius: BorderRadius.all(Radius.circular(5))
+                  ),
+                  width: 2,
+                  height: 70,
+                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.fromLTRB(10, 0, 20, 0),
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    color: color),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                  
+                        child: Text(
+                        title,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0),
+                      ),
+    
+                      
+                 
+                      padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
+                    ),
+                    participants.length == 0
+                        ? Text(
+                            'Three hours left',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14.0),
+                            textAlign: TextAlign.start,
+                          )
+                        : generateParticipantList(participants),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(2, 10, 0, 10),
+                          child: Text(duration, style: TextStyle(color: Colors.white),),
+                        ),
+                        Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(7)),
+                          color: Colors.grey[200],
+                        ),
+                        padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                        child: Text('Reschedule'),
+                      ),
+                        
+                        Spacer(),
+                        Text(note, style: TextStyle(color: Colors.white, fontSize: 14),)
+                  ],
+                ),
+              ),
+            )
+          ],
+        ));
+  }
+
+  Widget generateParticipantList(List<String> participants) {
+    return Container(
+      margin: EdgeInsets.only(left: 0),
+      height: 25,
+      child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: participants.length,
+          itemBuilder: (context, index) {
+            return generateParticipantBox(participants[index]);
+          }),
+    );
+  }
+
+  Widget generateParticipantBox(String name) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.pink,
+        borderRadius: BorderRadius.all(Radius.circular(7))
+      ),
+      padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+      margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
+      child: Center(child: Text(name, style: TextStyle(color: Colors.white),),)
+    );
+  }
+
+  Widget generateCardList(BuildContext context, List<Event> events) {
+      return ListView.builder(
+        itemCount: events.length,
+          itemBuilder: (context,index) {
+            return generateEventsCard(
+                events[index].action,
+                events[index].startTime.toString(),
+                "",
+                events[index].tags,
+                sequence[index%4],
+                events[index].length.toString());
+          }
+      );
+  }
+
+  Widget loadEventsList(BuildContext context, Future<ScheduleGetResponse> schedule) {
+    return FutureBuilder<ScheduleGetResponse>(
+      future: schedule,
+      builder: (context,snapshot) {
+        if (snapshot.hasData) {
+           return generateCardList(context, snapshot.data.events);
+        } else if(snapshot.hasError) {
+          //Toast.show("Failed to retrieve events", context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
+          print("bruh");
+          return Text(snapshot.error.toString());
+        } else {
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
