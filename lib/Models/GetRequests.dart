@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:PersonalAssistantApp/Models/ScheduleGetResponse.dart';
-import 'package:PersonalAssistantApp/Models/SuggestGetResponse.dart';
+import 'package:PersonalAssistantApp/Models/Responses/ScheduleGetResponse.dart';
+import 'package:PersonalAssistantApp/Models/Responses/SuggestGetResponse.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';

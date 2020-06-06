@@ -1,4 +1,4 @@
-import 'Event.dart';
+import '../Event.dart';
 
 class ScheduleGetResponse {
   List<Event> events;
