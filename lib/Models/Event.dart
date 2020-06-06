@@ -1,20 +1,30 @@
 class Event {
   String action;
-  List<String> tags;
+  String tags;
   DateTime startTime;
-  double length;
+  int length;
   String repeats;
+
+  List<String> getTagsList() {
+    List<String> taglist = new List<String>();
+    taglist.add(this.tags);
+    return taglist;
+  }
 
   Event({this.action,this.tags,this.startTime,this.length,this.repeats});
   factory Event.fromJson(Map<String, dynamic> json) {
-    var startTime = DateTime.tryParse(json['start_time']);
-    if(startTime == null) return null;
+
+    var startTime = DateTime.tryParse(json['start_date']);
+    if(startTime == null) {
+      print("date NULL");
+      return null;
+    }
 
     return Event(
       action: json["action"],
-      tags: json["tags"],
+      tags: json["tag"],
       startTime: startTime,
-      length: double.tryParse(json['length']),
+      length: json["length"],
       repeats: json["repeats"]
     );
 

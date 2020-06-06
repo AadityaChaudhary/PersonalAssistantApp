@@ -21,8 +21,11 @@ class GetRequests {
 
   static Future<ScheduleGetResponse> schedule() async {
     final res = await http.get(Constants.API_SCHEDULE);
-
+    print("bruh moment ");
     if(res.statusCode == 200) {
+
+      print(res.body);
+      print("bruh moment 1");
       return ScheduleGetResponse.fromJson(json.decode(res.body));
     } else {
       throw Exception("failed to load json");

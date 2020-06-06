@@ -105,9 +105,16 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       ),
       body: Container(
-        child: ListView.builder(
+        child: _loadMainPageScaffold(context, schedule)
+      ),
+      
+    );
+  }
 
-            itemBuilder: (context, index) {
+  Widget _generateListViewLoading(BuildContext context) {
+    return ListView.builder(
+
+        itemBuilder: (context, index) {
 
           if (index == 0) {
             return _generateWelcomeMessage('Yash T');
@@ -119,8 +126,59 @@ class _MyHomePageState extends State<MyHomePage> {
             return _generateSuggestionsView();
           } else if (index == 4) {
             return _generateEventsHeader();
-          } else if (index == 5) {
-            return loadEventsList(context, schedule);
+          }
+          else {
+              return CircularProgressIndicator();
+          }
+
+        });
+  }
+  Widget _generateListViewSuccess(BuildContext context, List<Event> events) {
+    return ListView.builder(
+        itemCount: events.length + 4,
+        itemBuilder: (context, index) {
+
+          if (index == 0) {
+            return _generateWelcomeMessage('Yash T');
+          } else if (index == 1) {
+            return _generateTextBox();
+          } else if (index == 2) {
+            return _generateSuggestionsHeader();
+          } else if (index == 3) {
+            return _generateSuggestionsView();
+          } else if (index == 4) {
+            return _generateEventsHeader();
+          }
+          else {
+              return generateEventsCard(events[index-5].action,
+                  events[index-5].startTime.toString(),
+                  "",
+                  events[index-5].getTagsList(),
+                  sequence[(index-5)%4],
+                  (events[index-5].length.toString() + " minutes")
+              );
+          }
+
+        });
+  }
+  Widget _generateListViewFailed(BuildContext context, String err) {
+    return ListView.builder(
+
+        itemBuilder: (context, index) {
+
+          if (index == 0) {
+            return _generateWelcomeMessage('Yash T');
+          } else if (index == 1) {
+            return _generateTextBox();
+          } else if (index == 2) {
+            return _generateSuggestionsHeader();
+          } else if (index == 3) {
+            return _generateSuggestionsView();
+          } else if (index == 4) {
+            return _generateEventsHeader();
+          }
+          else {
+            return Text(err);
           }
 //            return generateEventsCard(
 //                'Hackathon Planning Meeting',
@@ -134,11 +192,9 @@ class _MyHomePageState extends State<MyHomePage> {
 //                'Discussing how to destroy Adi\'s entire career before it even started',
 //                [ "Desgroup Whatley", 'Lunarcoffee Gao'], sequence[index%4], '1 hour');
 //          }
-        }),
-      ),
-      
-    );
+        });
   }
+
 
   Widget _generateWelcomeMessage(String name) {
     return Container(
@@ -243,8 +299,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget _generateSuggestionCard(
-      String title, String info, Color color, IconData icon) {
+  Widget _generateSuggestionCard(String title, String info, Color color, IconData icon) {
     return Container(
       height: 150,
       width: 150,
@@ -293,6 +348,21 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+
+ Widget _loadMainPageScaffold(BuildContext context, Future<ScheduleGetResponse> schedule) {
+   return FutureBuilder<ScheduleGetResponse>(
+     future: schedule,
+     builder: (context,snapshot) {
+       if (snapshot.hasData) {
+         return _generateListViewSuccess(context, snapshot.data.events);
+       } else if(snapshot.hasError) {
+         return _generateListViewFailed(context, snapshot.error.toString());
+       } else {
+         return _generateListViewLoading(context);
+       }
+     },
+   );
+ }
 
 }
 
@@ -414,33 +484,19 @@ Widget generateEventsCard(String title, String time, String note, List<String> p
 
   Widget generateCardList(BuildContext context, List<Event> events) {
       return ListView.builder(
+        shrinkWrap: true,
         itemCount: events.length,
           itemBuilder: (context,index) {
             return generateEventsCard(
                 events[index].action,
                 events[index].startTime.toString(),
                 "",
-                events[index].tags,
+                events[index].getTagsList(),
                 sequence[index%4],
                 events[index].length.toString());
           }
       );
   }
 
-  Widget loadEventsList(BuildContext context, Future<ScheduleGetResponse> schedule) {
-    return FutureBuilder<ScheduleGetResponse>(
-      future: schedule,
-      builder: (context,snapshot) {
-        if (snapshot.hasData) {
-           return generateCardList(context, snapshot.data.events);
-        } else if(snapshot.hasError) {
-          //Toast.show("Failed to retrieve events", context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM);
-          print("bruh");
-          return Text(snapshot.error.toString());
-        } else {
-          return CircularProgressIndicator();
-        }
-      },
-    );
-  }
+
 

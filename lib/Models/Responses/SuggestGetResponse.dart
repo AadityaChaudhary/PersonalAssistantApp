@@ -13,7 +13,7 @@ class SuggestGetResponse {
      
      
      return SuggestGetResponse(
-       tags: json['tags'],
+       tags: json['tag'],
        startTime: startTime,
        length: double.tryParse(json['length']),
        repeats: json['repeats']
