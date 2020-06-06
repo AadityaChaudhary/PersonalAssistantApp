@@ -75,7 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
  void initState() {
    super.initState();
-
+//    print("getting events");
    schedule = GetRequests.schedule();
  }
 
@@ -115,7 +115,6 @@ class _MyHomePageState extends State<MyHomePage> {
     return ListView.builder(
 
         itemBuilder: (context, index) {
-
           if (index == 0) {
             return _generateWelcomeMessage('Yash T');
           } else if (index == 1) {
@@ -135,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   Widget _generateListViewSuccess(BuildContext context, List<Event> events) {
     return ListView.builder(
-        itemCount: events.length + 4,
+        itemCount: events.length + 5,
         itemBuilder: (context, index) {
 
           if (index == 0) {
@@ -354,6 +353,8 @@ class _MyHomePageState extends State<MyHomePage> {
      future: schedule,
      builder: (context,snapshot) {
        if (snapshot.hasData) {
+//         print("success");
+//         print("data length: " + snapshot.data.events.length.toString());
          return _generateListViewSuccess(context, snapshot.data.events);
        } else if(snapshot.hasError) {
          return _generateListViewFailed(context, snapshot.error.toString());

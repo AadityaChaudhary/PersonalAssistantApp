@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Event {
   String action;
   String tags;
@@ -19,6 +21,11 @@ class Event {
       print("date NULL");
       return null;
     }
+//    print("date: " + startTime.toString());
+//    print(json["length"]);
+//    print(json["repeats"]);
+//    print(json["action"]);
+//    print(json["tag"]);
 
     return Event(
       action: json["action"],

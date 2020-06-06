@@ -8,7 +8,7 @@ class ScheduleGetResponse {
   ScheduleGetResponse({this.events});
   factory ScheduleGetResponse.fromJson(Map<String, dynamic> json) {
     List<Event> events = new List<Event>();
-    int y = 0;
+//    int y = 0;
 //    print("bruh moment +2 ");
 //    print(json["events"].length);
 //    print("bruh moment -2 ");
@@ -20,12 +20,13 @@ class ScheduleGetResponse {
         print("stuff is null");
 
       } else {
-        //print("else");
+//        print("else");
         events.add(x);
       }
       //print("after if-statement");
 
     }
+//    print("returning");
     return ScheduleGetResponse(
       events: events
     );
