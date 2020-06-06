@@ -25,10 +25,10 @@ class CalendarPage extends StatefulWidget {
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  DateTime _currentDate = DateTime(2020, 6, 7);
-  DateTime _currentDate2 = DateTime(2020, 6, 7);
+  DateTime _currentDate = DateTime(2020, 6, 9);
+  DateTime _currentDate2 = DateTime(2020, 6, 12);
   String _currentMonth = DateFormat.yMMM().format(DateTime(2020, 6, 7));
-  DateTime _targetDateTime = DateTime(2020, 6, 7);
+  DateTime _targetDateTime = DateTime(2020, 6, 14);
 //  List<DateTime> _markedDate = [DateTime(2018, 9, 20), DateTime(2018, 10, 11)];
   static Widget _eventIcon = new Container(
     decoration: new BoxDecoration(
@@ -45,7 +45,7 @@ class _CalendarPageState extends State<CalendarPage> {
     events: {
       new DateTime(2020, 6, 7): [
         new Event(
-          date: new DateTime(2020, 6, 7),
+          date: new DateTime(2020, 6, 8),
           title: 'Event 1',
           icon: _eventIcon,
           dot: Container(
@@ -56,12 +56,12 @@ class _CalendarPageState extends State<CalendarPage> {
           ),
         ),
         new Event(
-          date: new DateTime(2020, 6, 7),
+          date: new DateTime(2020, 6, 8),
           title: 'Event 2',
           icon: _eventIcon,
         ),
         new Event(
-          date: new DateTime(2020, 6, 7),
+          date: new DateTime(2020, 6, 12),
           title: 'Event 3',
           icon: _eventIcon,
         ),
@@ -100,7 +100,7 @@ class _CalendarPageState extends State<CalendarPage> {
 //      firstDayOfWeek: 4,
       markedDatesMap: _markedDateMap,
       height: 420.0,
-      selectedDateTime: _currentDate2,
+      // selectedDateTime: _currentDate2,
       targetDateTime: _targetDateTime,
       customGridViewPhysics: NeverScrollableScrollPhysics(),
       markedDateCustomShapeBorder: CircleBorder(
@@ -112,7 +112,7 @@ class _CalendarPageState extends State<CalendarPage> {
       ),
       showHeader: false,
       todayTextStyle: TextStyle(
-        color: Colors.white,
+        color: Colors.black,
       ),
       // markedDateShowIcon: true,
       // markedDateIconMaxShown: 2,

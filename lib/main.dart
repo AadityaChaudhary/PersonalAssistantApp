@@ -483,13 +483,14 @@ Widget generateEventsCard(String title, String time, String note, List<String> p
   }
 
   Widget generateCardList(BuildContext context, List<Event> events) {
+
       return ListView.builder(
         shrinkWrap: true,
         itemCount: events.length,
           itemBuilder: (context,index) {
             return generateEventsCard(
                 events[index].action,
-                events[index].startTime.toString(),
+                events[index].startTime.hour.toString(),
                 "",
                 events[index].getTagsList(),
                 sequence[index%4],

@@ -24,7 +24,10 @@ class MiniApps extends StatelessWidget {
 
           return GestureDetector(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => QExcercise()));
+              if (appNames[index~/2] == "QExcercise") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => QExcercise()));     
+              }
+              
             },
             child: Row(
             children: [
