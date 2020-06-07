@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'QExcercise.dart';
+import 'quinoabank.dart';
 
 class MiniApps extends StatelessWidget {
 
@@ -24,8 +25,14 @@ class MiniApps extends StatelessWidget {
 
           return GestureDetector(
             onTap: () {
-              if (appNames[index~/2] == "QExcercise") {
+              var appName = appNames[index~/2];
+
+              print(appName);
+
+              if (appName == "QExcercise") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => QExcercise()));     
+              } else if (appName == "QuinoaBank") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => QuinoaBank()));
               }
               
             },
