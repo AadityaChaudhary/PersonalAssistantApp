@@ -145,6 +145,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
                 setState(() {
                   // This is where you extract the Date adi
                   startDate = date;
+                  print(startDate.toIso8601String());
                 });
               },
             ),
@@ -226,7 +227,6 @@ class CreateTaskPageState extends State<CreateTaskPage> {
                       postSuggestion(lastSuggestion, false);
                     }
 
-
                         getSuggestions(widget.actionController.text);
                   },
                   child: Text(
@@ -268,7 +268,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
               tag: this.myTag.toString().split('.').last,
               length: this.duration,
               repeats: "none",
-              startTime: lastSuggestion.startTime
+              startTime: startDate
           );
 
           var res = PostRequest.schedule(params);
@@ -276,6 +276,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
           res.whenComplete(() => {
             setState(() {
               Global.getEvents();
+
            }),
               Navigator.pop(context)
           });

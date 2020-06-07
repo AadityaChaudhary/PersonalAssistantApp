@@ -139,8 +139,16 @@ TextEditingController controller = TextEditingController();
         });
   }
   Widget _generateListViewSuccess(BuildContext context, List<Event> events) {
+    if(Global.events.length != events.length) {
+        Global.events = events;
+    }
+    var len = events.length;
+    if(events.length == 0) {
+      len = 1;
+    }
+
     return ListView.builder(
-        itemCount: events.length + 5,
+        itemCount: len + 5,
         itemBuilder: (context, index) {
 
           if (index == 0) {
@@ -155,7 +163,14 @@ TextEditingController controller = TextEditingController();
             return _generateEventsHeader();
           }
           else {
-            var time = events[index-5].startTime;
+            if(events.length == 0) {
+                return  Text("Seems Like You Haven't Scheduled Anything",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white
+                    ));
+            } else {
+              var time = events[index-5].startTime;
               return generateEventsCard(events[index-5].action,
                   "${time.hour < 13 ? time.hour : time.hour % 12}:${time.minute < 10 ? 0 : ''}${time.minute} ${time.hour < 13 ? 'AM' : 'PM'}",
                   "",
@@ -163,6 +178,11 @@ TextEditingController controller = TextEditingController();
                   sequence[(index-5)%4],
                   (events[index-5].length.toString() + " minutes")
               );
+            }
+
+
+
+
           }
 
         });

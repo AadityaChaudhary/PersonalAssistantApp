@@ -8,6 +8,7 @@ import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import '../main.dart';
 import 'package:PersonalAssistantApp/Global.dart';
+import 'package:PersonalAssistantApp/Models/Event.dart' as Quinoa;
 
 
 class CalendarPage extends StatefulWidget {
@@ -36,16 +37,26 @@ class _CalendarPageState extends State<CalendarPage> {
 
 
   CalendarCarousel _calendarCarouselNoHeader;
+  EventList<Event> _markedDateMap;
 
   @override
   void initState() {
     /// Add more events to _markedDateMap EventList
-  
     super.initState();
+    Global.printEvents();
+
+
   }
 
   @override
   Widget build(BuildContext context) {
+    _markedDateMap = new EventList<Event>();
+    for(Quinoa.Event e in Global.events) {
+      _markedDateMap.add(
+          e.startTime,
+          new Event(title: e.action, date: e.startTime,icon: _eventIcon)
+      );
+    }
     _calendarCarouselNoHeader = CalendarCarousel<Event>(
       selectedDayButtonColor: Colors.white,
       dayPadding: 5,
@@ -64,7 +75,7 @@ class _CalendarPageState extends State<CalendarPage> {
       thisMonthDayBorderColor: Colors.grey[800],
       weekFormat: false,
 //      firstDayOfWeek: 4,
-      markedDatesMap: Global.markedDateMap,
+      markedDatesMap: _markedDateMap,
       height: 420.0,
       // selectedDateTime: _currentDate2,
       targetDateTime: _targetDateTime,
@@ -205,6 +216,17 @@ class _CalendarPageState extends State<CalendarPage> {
           ),
         ));
   }
+
+  static Widget _eventIcon = new Container(
+    decoration: new BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(1000)),
+        border: Border.all(color: Colors.blue, width: 2.0)),
+    child: new Icon(
+      Icons.person,
+      color: Colors.amber,
+    ),
+  );
 
   _generateDayHeader(String day) {
     return Container(
