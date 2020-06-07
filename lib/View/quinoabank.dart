@@ -212,7 +212,7 @@ class QuinoaBank extends StatelessWidget {
                         ),
                         TableRow(
                           children: [
-                            Text('Butter Chicken - Tasty MMmmm'),
+                            Text('Butter Chicken - Tasty'),
                             Text('\$12.03', textAlign: TextAlign.right)
                           ]
                         ),
@@ -224,14 +224,14 @@ class QuinoaBank extends StatelessWidget {
                         ),
                         TableRow(
                           children: [
-                            Text('Manga Cafe - Good Guy Adventures'),
+                            Text('Manga Cafe'),
                             Text('\$10.01', textAlign: TextAlign.right)
                           ]
                         ),
                         TableRow(
                           children: [
-                            Text('What the Heck! - Board Game by Y.T.'),
-                            Text('\$60.72', textAlign: TextAlign.right)
+                            Text('What the Heck by Y.T.'),
+                            Text('\$99.99', textAlign: TextAlign.right)
                           ]
                         )
                       ]
