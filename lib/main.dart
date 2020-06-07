@@ -1,3 +1,5 @@
+
+
 import 'package:PersonalAssistantApp/Models/GetRequests.dart';
 import 'package:PersonalAssistantApp/Models/Responses/ScheduleGetResponse.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +8,7 @@ import 'View/createTask.dart';
 import 'View/dashboard.dart';
 import 'View/miniapps.dart';
 import 'Models/Event.dart';
+import 'package:PersonalAssistantApp/Global.dart';
 
 import 'package:toast/toast.dart';
 
@@ -79,10 +82,10 @@ TextEditingController controller = TextEditingController();
  void initState() {
    super.initState();
 //    print("getting events");
-   schedule = GetRequests.schedule();
+    Global.getEvents();
  }
 
- Future<ScheduleGetResponse> schedule;
+
 
   @override
   Widget build(BuildContext context) {
@@ -108,7 +111,7 @@ TextEditingController controller = TextEditingController();
         ],
       ),
       body: Container(
-        child: _loadMainPageScaffold(context, schedule)
+        child: _loadMainPageScaffold(context, Global.schedule)
       ),
       
     );
@@ -356,9 +359,10 @@ TextEditingController controller = TextEditingController();
    return FutureBuilder<ScheduleGetResponse>(
      future: schedule,
      builder: (context,snapshot) {
-       if (snapshot.hasData) {
+       if (snapshot.hasData ) {
 //         print("success");
 //         print("data length: " + snapshot.data.events.length.toString());
+
          return _generateListViewSuccess(context, snapshot.data.events);
        } else if(snapshot.hasError) {
          return _generateListViewFailed(context, snapshot.error.toString());

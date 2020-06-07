@@ -65,7 +65,7 @@ class Classifier {
   }
 
   List<List<double>> tokenizeInputText(String text) {
-    print(_dict);
+    //print(_dict);
    
     // Whitespace tokenization
     final toks = text.split(' ');

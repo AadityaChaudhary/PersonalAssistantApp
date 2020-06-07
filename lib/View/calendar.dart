@@ -7,6 +7,7 @@ import 'package:flutter_calendar_carousel/classes/event.dart';
 import 'package:flutter_calendar_carousel/classes/event_list.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import '../main.dart';
+import 'package:PersonalAssistantApp/Global.dart';
 
 
 class CalendarPage extends StatefulWidget {
@@ -30,44 +31,9 @@ class _CalendarPageState extends State<CalendarPage> {
   String _currentMonth = DateFormat.yMMM().format(DateTime(2020, 6, 7));
   DateTime _targetDateTime = DateTime(2020, 6, 14);
 //  List<DateTime> _markedDate = [DateTime(2018, 9, 20), DateTime(2018, 10, 11)];
-  static Widget _eventIcon = new Container(
-    decoration: new BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(1000)),
-        border: Border.all(color: Colors.blue, width: 2.0)),
-    child: new Icon(
-      Icons.person,
-      color: Colors.amber,
-    ),
-  );
 
-  EventList<Event> _markedDateMap = new EventList<Event>(
-    events: {
-      new DateTime(2020, 6, 7): [
-        new Event(
-          date: new DateTime(2020, 6, 8),
-          title: 'Event 1',
-          icon: _eventIcon,
-          dot: Container(
-            margin: EdgeInsets.symmetric(horizontal: 1.0),
-            color: Colors.white,
-            height: 5.0,
-            width: 5.0,
-          ),
-        ),
-        new Event(
-          date: new DateTime(2020, 6, 8),
-          title: 'Event 2',
-          icon: _eventIcon,
-        ),
-        new Event(
-          date: new DateTime(2020, 6, 12),
-          title: 'Event 3',
-          icon: _eventIcon,
-        ),
-      ],
-    },
-  );
+
+
 
   CalendarCarousel _calendarCarouselNoHeader;
 
@@ -98,7 +64,7 @@ class _CalendarPageState extends State<CalendarPage> {
       thisMonthDayBorderColor: Colors.grey[800],
       weekFormat: false,
 //      firstDayOfWeek: 4,
-      markedDatesMap: _markedDateMap,
+      markedDatesMap: Global.markedDateMap,
       height: 420.0,
       // selectedDateTime: _currentDate2,
       targetDateTime: _targetDateTime,

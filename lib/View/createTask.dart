@@ -6,6 +6,7 @@ import 'package:PersonalAssistantApp/classifier.dart';
 import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../Global.dart';
 import '../main.dart';
 
 
@@ -26,7 +27,7 @@ List<Color> sequence = [Colors.blue, Colors.teal, Colors.orange, Colors.green];
 
 class CreateTaskPageState extends State<CreateTaskPage> {
 
-  tag myTag = null;
+  tag myTag = tag.task;
     var focusNode = new FocusNode();
 
   Classifier classifier = Classifier();
@@ -48,7 +49,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
     var hours = (time / 60).round();
     var minutes = time % 60.round();
     var suffix = "AM";
-    if (hours > 13 && hours < 25) {
+    if (hours > 12 && hours < 25) {
       suffix = "PM";
       hours = hours % 12;
     }
@@ -179,6 +180,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
               //   return _generateTimeCard(index, index == 0);
               // })
               ),
+
           Container(
               height: 50,
               margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
@@ -220,7 +222,11 @@ class CreateTaskPageState extends State<CreateTaskPage> {
               child: FlatButton(
                   onPressed: () {
                     // Adi this is where you ask for a new time and update all required variables
-                        postSuggestion(lastSuggestion, false);
+                    if(lastSuggestion != null) {
+                      postSuggestion(lastSuggestion, false);
+                    }
+
+
                         getSuggestions(widget.actionController.text);
                   },
                   child: Text(
@@ -254,8 +260,26 @@ class CreateTaskPageState extends State<CreateTaskPage> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.arrow_forward),
         onPressed: () {
-          postSchedule();
-          Navigator.pop(context);
+          //postSchedule();
+
+          PostParameters params = new PostParameters(
+              action: widget.actionController.text,
+              accepted: true,
+              tag: this.myTag.toString().split('.').last,
+              length: this.duration,
+              repeats: "none",
+              startTime: lastSuggestion.startTime
+          );
+
+          var res = PostRequest.schedule(params);
+
+          res.whenComplete(() => {
+            setState(() {
+              Global.getEvents();
+           }),
+              Navigator.pop(context)
+          });
+
         },
       ),
 
@@ -357,7 +381,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
 
     setState(() {
       lastSuggestion = res;
-      time = res.startTime.hour*60 + res.startTime.minute;
+      time = (res.startTime.hour-1)*60 + res.startTime.minute;
       startDate = res.startTime;
       duration = res.length;
 
@@ -377,6 +401,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
       } else {
         myTag = tag.work;
       }
+      lastSuggestion.tag = myTag.toString().split(".").last;
     });
 
 
@@ -386,7 +411,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
     PostParameters params = new PostParameters(
       action: widget.actionController.text,
       accepted: accepted,
-      tag: lastSuggestion.tag,
+      tag: lastSuggestion.tag.toString().split('.').last,
       length: lastSuggestion.length,
       repeats: "none",
       startTime: lastSuggestion.startTime
@@ -400,7 +425,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
     PostParameters params = new PostParameters(
       action: widget.actionController.text,
         accepted: true,
-        tag: this.myTag.toString(),
+        tag: this.myTag.toString().split('.').last,
         length: this.duration,
         repeats: "none",
         startTime: lastSuggestion.startTime

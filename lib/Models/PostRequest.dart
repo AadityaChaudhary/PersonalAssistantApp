@@ -22,8 +22,9 @@ class PostRequest {
     );
 
     if(res.statusCode == 200) {
-      //return SchedulePostResponse.fromJson(json.decode(res.body));
-      print(res.body);
+      print(res.body + " -> schedule");
+      return SchedulePostResponse(ok: res.body == "OK");
+
 
     } else {
       throw Exception("failed to load json");
@@ -46,8 +47,10 @@ class PostRequest {
     );
 
     if(res.statusCode == 200) {
-      //return SuggestPostResponse.fromJson(jsonDecode(res.body));
-      print(res.body);
+      print(res.body + " -> suggestion");
+      return SuggestPostResponse(ok: res.body == "OK");
+
+
     } else {
       throw Exception("failed to load json");
     }
