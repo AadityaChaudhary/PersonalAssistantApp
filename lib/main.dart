@@ -455,7 +455,7 @@ Widget generateEventsCard(String title, String time, String note, List<String> p
                     ),
                     participants.length == 0
                         ? Text(
-                            'Three hours left',
+                            '',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,

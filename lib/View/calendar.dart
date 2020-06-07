@@ -38,7 +38,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   CalendarCarousel _calendarCarouselNoHeader;
   EventList<Event> _markedDateMap;
-
+  List<Event> _displayEvents = new List<Event>();
   @override
   void initState() {
     /// Add more events to _markedDateMap EventList
@@ -57,12 +57,17 @@ class _CalendarPageState extends State<CalendarPage> {
           new Event(title: e.action, date: e.startTime,icon: _eventIcon)
       );
     }
+
     _calendarCarouselNoHeader = CalendarCarousel<Event>(
       selectedDayButtonColor: Colors.white,
       dayPadding: 5,
       todayBorderColor: Colors.teal,
       onDayPressed: (DateTime date, List<Event> events) {
-        this.setState(() => _currentDate2 = date);
+        this.setState(() => {
+          _currentDate2 = date,
+          _displayEvents = events
+
+        });
         events.forEach((event) => print(event.title));
       },
       daysHaveCircularBorder: true,
@@ -192,21 +197,33 @@ class _CalendarPageState extends State<CalendarPage> {
                   ],
                 );
               } else if (index == 1) {
-                return _generateDayHeader('June 8, 2020');
-              } else if (index == 2) {
-                return generateEventsCard(
-                'Hackathon Planning Meeting',
-                '4:00 PM',
-                'Discussing what we need to do for Hack the North and planning some epic project ideas',
-                ['Aaditya Chaudhary', "Desgroup Whatley", 'Lunarcoffee Gao'], sequence[1], '2 hours');
+                return _generateDayHeader(_currentDate2.month.toString() + "-" + _currentDate2.day.toString() + "-" + _currentDate2.year .toString());
+              }
+//              else if (index == 2) {
+//                return generateEventsCard(
+//                'Hackathon Planning Meeting',
+//                '4:00 PM',
+//                'Discussing what we need to do for Hack the North and planning some epic project ideas',
+//                ['Aaditya Chaudhary', "Desgroup Whatley", 'Lunarcoffee Gao'], sequence[1], '2 hours');
+//
+//              } else if (index == 3) {
+//                return generateEventsCard(
+//                'Hackathon Planning Meeting',
+//                '4:00 PM',
+//                'Discussing what we need to do for Hack the North and planning some epic project ideas',
+//                ['Aaditya Chaudhary', "Desgroup Whatley", 'Lunarcoffee Gao'], sequence[1], '2 hours');
+//
+//              }
+            else {
+                  if(index - 2 < _displayEvents.length) {
+                    var time = _displayEvents[index-2].date;
+                    return _generateEventsCard(
+                        _displayEvents[index-2].title,
+                        "${time.hour < 13 ? time.hour : time.hour % 12}:${time.minute < 10 ? 0 : ''}${time.minute} ${time.hour < 13 ? 'AM' : 'PM'}",
+                        sequence[index%4],
 
-              } else if (index == 3) {
-                return generateEventsCard(
-                'Hackathon Planning Meeting',
-                '4:00 PM',
-                'Discussing what we need to do for Hack the North and planning some epic project ideas',
-                ['Aaditya Chaudhary', "Desgroup Whatley", 'Lunarcoffee Gao'], sequence[1], '2 hours');
-
+                    );
+                  }
               }
             }
          
@@ -214,6 +231,81 @@ class _CalendarPageState extends State<CalendarPage> {
               
 
           ),
+        ));
+  }
+  Widget _generateEventsCard(String title, String time, Color color) {
+    return Container(
+        margin: EdgeInsets.fromLTRB(0, 0, 0, 30),
+        height: 180,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Column(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.all(Radius.circular(5))
+                  ),
+                  width: 2,
+                  height: 70,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                ),
+                Text(
+                  time,
+                  style: TextStyle(color: Colors.white),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white70,
+                      borderRadius: BorderRadius.all(Radius.circular(5))
+                  ),
+                  width: 2,
+                  height: 70,
+                  margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Container(
+                margin: EdgeInsets.fromLTRB(10, 0, 20, 0),
+                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    color: color),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18.0),
+                      ),
+
+                      padding: EdgeInsets.fromLTRB(0, 0, 10, 10),
+                    ),
+
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(7)),
+                        color: Colors.grey[200],
+                      ),
+                      padding: EdgeInsets.fromLTRB(5, 2, 5, 2),
+                      child: Text('Reschedule'),
+                    ),
+
+//                    Spacer(),
+
+                  ],
+                ),
+              ),
+            )
+          ],
         ));
   }
 
