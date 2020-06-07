@@ -2,10 +2,18 @@ import 'package:PersonalAssistantApp/Models/GetRequests.dart';
 import 'package:PersonalAssistantApp/Models/Parameters/PostParameters.dart';
 import 'package:PersonalAssistantApp/Models/PostRequest.dart';
 import 'package:PersonalAssistantApp/Models/Responses/SuggestGetResponse.dart';
+import 'package:PersonalAssistantApp/classifier.dart';
 import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../main.dart';
+
+
 class CreateTaskPage extends StatefulWidget {
+   final TextEditingController actionController;
+
+   CreateTaskPage(this.actionController);
+
   @override
   createState() => CreateTaskPageState();
 }
@@ -19,14 +27,14 @@ List<Color> sequence = [Colors.blue, Colors.teal, Colors.orange, Colors.green];
 class CreateTaskPageState extends State<CreateTaskPage> {
 
   tag myTag = null;
+    var focusNode = new FocusNode();
+
+  Classifier classifier = Classifier();
 
   initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 30), () {
-// Here you can write your code
-
+    Future.delayed(const Duration(milliseconds: 100), () { 
       FocusScope.of(context).requestFocus(focusNode);
-//or
       focusNode.requestFocus();
     });
   }
@@ -59,7 +67,9 @@ class CreateTaskPageState extends State<CreateTaskPage> {
         leading: IconButton(
             icon: Icon(Icons.cancel),
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.pop(context, {
+               
+              });
             }),
       ),
       body: ListView(
@@ -73,13 +83,15 @@ class CreateTaskPageState extends State<CreateTaskPage> {
                     color: Colors.grey[800],
                     borderRadius: BorderRadius.all(Radius.circular(10))),
                 child: TextField(
-                  controller: actionController,
+                  controller: widget.actionController,
                   onEditingComplete: () {
                     // Adi this is where you query the server and the tflite model for recognition
                     // If you set the tag variable it will automatically update if you use setstate
                     // Just update the time and duration variables from here (they're class properties) with a setstate and it'll all work
-                    getSuggestions(actionController.text);
+                    FocusScope.of(context).requestFocus(FocusNode());
+                    getSuggestions(widget.actionController.text);
                   },
+                  autofocus: true,
                   focusNode: focusNode,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
@@ -209,14 +221,15 @@ class CreateTaskPageState extends State<CreateTaskPage> {
                   onPressed: () {
                     // Adi this is where you ask for a new time and update all required variables
                         postSuggestion(lastSuggestion, false);
-                        getSuggestions(actionController.text);
+                        getSuggestions(widget.actionController.text);
                   },
                   child: Text(
                     'Suggest another time',
                     style: TextStyle(color: Colors.white),
                   ))),
 
-          Container(
+          IgnorePointer(
+            child: Container(
             margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
             padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
             decoration: BoxDecoration(
@@ -224,7 +237,6 @@ class CreateTaskPageState extends State<CreateTaskPage> {
                 borderRadius: BorderRadius.all(Radius.circular(10))),
             child: TextField(
               maxLines: 5,
-              focusNode: focusNode,
               style: TextStyle(color: Colors.white),
               decoration: InputDecoration(
                 fillColor: Colors.grey[800],
@@ -234,6 +246,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
                 hintStyle: TextStyle(color: Colors.white70),
               ),
             ),
+          )
           )
         ],
       ),
@@ -347,11 +360,22 @@ class CreateTaskPageState extends State<CreateTaskPage> {
       time = res.startTime.hour*60 + res.startTime.minute;
       startDate = res.startTime;
       duration = res.length;
-      switch (res.tag) {
-        case "task": myTag = tag.task; break;
-        case "leisure": myTag = tag.leisure; break;
-        case "work": myTag = tag.work; break;
-        case "school": myTag = tag.school; break;
+
+      List pred = classifier.classify(action);
+      print(pred);
+      double task = pred[0][0];
+      double leisure = pred[0][1];
+      double school = pred[0][2];
+      double work = pred[0][3];
+
+      if (task > leisure && task > school && task > work) {
+        myTag = tag.task;
+      } else if (leisure > task && leisure > school && leisure > work) {
+        myTag = tag.leisure;
+      } else if (school > task && school > leisure && school > work) { 
+        myTag = tag.school;
+      } else {
+        myTag = tag.work;
       }
     });
 
@@ -360,7 +384,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
 
   void postSuggestion(SuggestGetResponse lastSuggestion, bool accepted) async {
     PostParameters params = new PostParameters(
-      action: actionController.text,
+      action: widget.actionController.text,
       accepted: accepted,
       tag: lastSuggestion.tag,
       length: lastSuggestion.length,
@@ -374,7 +398,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
 
   void postSchedule() async {
     PostParameters params = new PostParameters(
-      action: actionController.text,
+      action: widget.actionController.text,
         accepted: true,
         tag: this.myTag.toString(),
         length: this.duration,
@@ -385,7 +409,6 @@ class CreateTaskPageState extends State<CreateTaskPage> {
     var res = await PostRequest.schedule(params);
   }
 
-  TextEditingController actionController = new TextEditingController();
-  var focusNode = new FocusNode();
+ 
 
 }

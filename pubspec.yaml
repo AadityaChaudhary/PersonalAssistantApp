@@ -33,6 +33,9 @@ dependencies:
   date_picker_timeline: ^1.2.0
   fl_chart: ^0.10.0
   toast: ^0.1.5
+  
+  tflite_flutter: ^0.3.0
+
 
 dev_dependencies:
   flutter_test:
@@ -48,7 +51,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
+  assets:
+   - assets/model.tflite
+   - assets/vocab.txt
 
   # To add assets to your application, add an assets section, like this:
   # assets:

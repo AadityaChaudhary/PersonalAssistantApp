@@ -24,6 +24,7 @@ class CorePage extends StatefulWidget {
 }
 
 class CorePageState extends State<CorePage> {
+  
   int _currentDisplayIndex = 0;
   List<Widget> screens = [MyHomePage(), CalendarPage(), DashboardPage(), MiniApps()];
 
@@ -31,12 +32,14 @@ class CorePageState extends State<CorePage> {
     setState(() { _currentDisplayIndex = index; });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         bottomNavigationBar: BottomNavigationBar(
           onTap:  (int i) => onTapNav(i),
         type : BottomNavigationBarType.fixed,
+        
         backgroundColor: Colors.grey[900],
         selectedItemColor: Colors.white,
         unselectedItemColor: Colors.grey[300],
@@ -72,7 +75,7 @@ class MyHomePage extends StatefulWidget {
  List<Color> sequence = [Colors.blue, Colors.teal, Colors.orange, Colors.green];
 
 class _MyHomePageState extends State<MyHomePage> { 
-
+TextEditingController controller = TextEditingController();
  void initState() {
    super.initState();
 //    print("getting events");
@@ -149,8 +152,9 @@ class _MyHomePageState extends State<MyHomePage> {
             return _generateEventsHeader();
           }
           else {
+            var time = events[index-5].startTime;
               return generateEventsCard(events[index-5].action,
-                  events[index-5].startTime.toString(),
+                  "${time.hour < 13 ? time.hour : time.hour % 12}:${time.minute < 10 ? 0 : ''}${time.minute} ${time.hour < 13 ? 'AM' : 'PM'}",
                   "",
                   events[index-5].getTagsList(),
                   sequence[(index-5)%4],
@@ -193,8 +197,7 @@ class _MyHomePageState extends State<MyHomePage> {
 //          }
         });
   }
-
-
+  
   Widget _generateWelcomeMessage(String name) {
     return Container(
       height: 100,
@@ -214,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Container(
             padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
             child: Text(
-              'Friday, June 5, 2020',
+              'Friday, June 7, 2020',
               style: TextStyle(fontSize: 20, color: Colors.white70),
             ),
           ),
@@ -226,8 +229,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
  void onChanged(String text) {
     if (!switched) {
-      switched = true;
-      Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTaskPage()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTaskPage(controller)));
     }
  }
   
@@ -241,6 +243,7 @@ class _MyHomePageState extends State<MyHomePage> {
           color: Colors.grey[800],
           borderRadius: BorderRadius.all(Radius.circular(10))),
         child: TextField(
+          controller: controller,
           onChanged: (text) => onChanged(text),
         style: TextStyle(color: Colors.white),
         decoration: InputDecoration(
