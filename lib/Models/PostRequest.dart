@@ -9,15 +9,22 @@ class PostRequest {
 
   static Future<SchedulePostResponse> schedule(PostParameters params) async {
     var res = await http.post(
-      Constants.API_SCHEDULE,
+        (Constants.API_SCHEDULE + "?tag=" + params.tag
+            + "&start_date=" + params.startTime.toIso8601String()
+            + "&length=" + params.length.toString()
+            + "&repeats=none"
+            + "&action=" + params.action
+        ),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(params.toJson())
+
     );
 
     if(res.statusCode == 200) {
-      return SchedulePostResponse.fromJson(json.decode(res.body));
+      //return SchedulePostResponse.fromJson(json.decode(res.body));
+      print(res.body);
+
     } else {
       throw Exception("failed to load json");
     }
@@ -25,15 +32,22 @@ class PostRequest {
 
   static Future<SuggestPostResponse> suggest(PostParameters params) async {
     var res = await http.post(
-        Constants.API_SUGGEST,
+        (Constants.API_SUGGEST + "?tag=" + params.tag
+            + "&start_date=" + params.startTime.toIso8601String()
+            + "&length=" + params.length.toString()
+            + "&accepted=" + params.repeats.toString()
+            + "&repeats=none"
+            + "&action=" + params.action
+        ),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonEncode(params.toJson())
+
     );
 
     if(res.statusCode == 200) {
-      return SuggestPostResponse.fromJson(json.decode(res.body));
+      //return SuggestPostResponse.fromJson(jsonDecode(res.body));
+      print(res.body);
     } else {
       throw Exception("failed to load json");
     }

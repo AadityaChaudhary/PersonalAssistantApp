@@ -1,20 +1,21 @@
 
 class SuggestGetResponse {
-   List<String> tags;
+   String tag;
    DateTime startTime;
-   double length;
+   int length;
    String repeats;
 
-   SuggestGetResponse({this.tags,this.startTime,this.length,this.repeats});
+   SuggestGetResponse({this.tag,this.startTime,this.length,this.repeats});
    factory SuggestGetResponse.fromJson(Map<String, dynamic> json) {
-     var startTime = DateTime.tryParse(json['start_time']);
+
+     var startTime = DateTime.tryParse(json['start_date']);
      if(startTime == null) return null;
      
      
      return SuggestGetResponse(
-       tags: json['tag'],
+       tag: json['tag'],
        startTime: startTime,
-       length: double.tryParse(json['length']),
+       length: json["length"],
        repeats: json['repeats']
      );
    }

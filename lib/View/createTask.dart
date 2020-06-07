@@ -1,3 +1,7 @@
+import 'package:PersonalAssistantApp/Models/GetRequests.dart';
+import 'package:PersonalAssistantApp/Models/Parameters/PostParameters.dart';
+import 'package:PersonalAssistantApp/Models/PostRequest.dart';
+import 'package:PersonalAssistantApp/Models/Responses/SuggestGetResponse.dart';
 import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -6,27 +10,11 @@ class CreateTaskPage extends StatefulWidget {
   createState() => CreateTaskPageState();
 }
 
-enum tag { chore, leisure, school, work }
+enum tag { task, leisure, school, work }
 
 List<Color> sequence = [Colors.blue, Colors.teal, Colors.orange, Colors.green];
 
-var focusNode = new FocusNode();
-var textField = TextField(
-  onEditingComplete: () {
-    // Adi this is where you query the server and the tflite model for recognition
-    // If you set the tag variable it will automatically update if you use setstate
-    // Just update the time and duration variables from here (they're class properties) with a setstate and it'll all work
-  },
-  focusNode: focusNode,
-  style: TextStyle(color: Colors.white),
-  decoration: InputDecoration(
-    fillColor: Colors.grey[800],
-    focusColor: Colors.grey[800],
-    border: InputBorder.none,
-    hintText: 'What would you like to schedule?',
-    hintStyle: TextStyle(color: Colors.white70),
-  ),
-);
+
 
 class CreateTaskPageState extends State<CreateTaskPage> {
 
@@ -34,7 +22,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
 
   initState() {
     super.initState();
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 30), () {
 // Here you can write your code
 
       FocusScope.of(context).requestFocus(focusNode);
@@ -45,6 +33,8 @@ class CreateTaskPageState extends State<CreateTaskPage> {
 
   int time = 0;
   int duration = 5;
+  DateTime startDate = DateTime.now();
+  SuggestGetResponse lastSuggestion;
 
   String _getTimeString() {
     var hours = (time / 60).round();
@@ -82,7 +72,24 @@ class CreateTaskPageState extends State<CreateTaskPage> {
                 decoration: BoxDecoration(
                     color: Colors.grey[800],
                     borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: textField),
+                child: TextField(
+                  controller: actionController,
+                  onEditingComplete: () {
+                    // Adi this is where you query the server and the tflite model for recognition
+                    // If you set the tag variable it will automatically update if you use setstate
+                    // Just update the time and duration variables from here (they're class properties) with a setstate and it'll all work
+                    getSuggestions(actionController.text);
+                  },
+                  focusNode: focusNode,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    fillColor: Colors.grey[800],
+                    focusColor: Colors.grey[800],
+                    border: InputBorder.none,
+                    hintText: 'What would you like to schedule?',
+                    hintStyle: TextStyle(color: Colors.white70),
+                  ),
+                )),
           ),
           Container(
             padding: EdgeInsets.fromLTRB(20, 10, 20, 20),
@@ -110,7 +117,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
           Container(
             padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
             child: DatePicker(
-              DateTime.now(),
+              startDate,
               initialSelectedDate: DateTime.now(),
               dateTextStyle: TextStyle(
                   color: Colors.white,
@@ -124,6 +131,7 @@ class CreateTaskPageState extends State<CreateTaskPage> {
                 // New date selected
                 setState(() {
                   // This is where you extract the Date adi
+                  startDate = date;
                 });
               },
             ),
@@ -200,6 +208,8 @@ class CreateTaskPageState extends State<CreateTaskPage> {
               child: FlatButton(
                   onPressed: () {
                     // Adi this is where you ask for a new time and update all required variables
+                        postSuggestion(lastSuggestion, false);
+                        getSuggestions(actionController.text);
                   },
                   child: Text(
                     'Suggest another time',
@@ -227,6 +237,15 @@ class CreateTaskPageState extends State<CreateTaskPage> {
           )
         ],
       ),
+
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.arrow_forward),
+        onPressed: () {
+          postSchedule();
+          Navigator.pop(context);
+        },
+      ),
+
     );
   }
 
@@ -317,4 +336,56 @@ class CreateTaskPageState extends State<CreateTaskPage> {
           ),
         ));
   }
+
+  void getSuggestions(String action) async {
+    print(action);
+    print("bruh");
+    SuggestGetResponse res = await GetRequests.suggest(action);
+
+    setState(() {
+      lastSuggestion = res;
+      time = res.startTime.hour*60 + res.startTime.minute;
+      startDate = res.startTime;
+      duration = res.length;
+      switch (res.tag) {
+        case "task": myTag = tag.task; break;
+        case "leisure": myTag = tag.leisure; break;
+        case "work": myTag = tag.work; break;
+        case "school": myTag = tag.school; break;
+      }
+    });
+
+
+  }
+
+  void postSuggestion(SuggestGetResponse lastSuggestion, bool accepted) async {
+    PostParameters params = new PostParameters(
+      action: actionController.text,
+      accepted: accepted,
+      tag: lastSuggestion.tag,
+      length: lastSuggestion.length,
+      repeats: "none",
+      startTime: lastSuggestion.startTime
+    );
+
+    var res = await PostRequest.suggest(params);
+
+  }
+
+  void postSchedule() async {
+    PostParameters params = new PostParameters(
+      action: actionController.text,
+        accepted: true,
+        tag: this.myTag.toString(),
+        length: this.duration,
+        repeats: "none",
+        startTime: lastSuggestion.startTime
+    );
+
+    var res = await PostRequest.schedule(params);
+  }
+
+  TextEditingController actionController = new TextEditingController();
+  var focusNode = new FocusNode();
+
 }

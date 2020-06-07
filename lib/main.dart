@@ -226,6 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
  void onChanged(String text) {
     if (!switched) {
+      switched = true;
       Navigator.push(context, MaterialPageRoute(builder: (context) => CreateTaskPage()));
     }
  }

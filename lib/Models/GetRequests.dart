@@ -13,7 +13,8 @@ class GetRequests {
     final res = await http.get(Constants.API_SUGGEST + "?action=" + action);
 
     if(res.statusCode == 200) {
-      return SuggestGetResponse.fromJson(json.decode(res.body));
+      print(res.body);
+      return SuggestGetResponse.fromJson(jsonDecode(res.body));
     } else {
       throw Exception("failed to load json");
     }

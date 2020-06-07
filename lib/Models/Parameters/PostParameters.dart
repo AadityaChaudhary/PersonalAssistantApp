@@ -1,22 +1,21 @@
 
 class PostParameters {
-    List<String> tags;
+    String action;
+    String tag;
     DateTime startTime;
-    DateTime length;
+    int length;
     String repeats;
     bool accepted;
 
-    PostParameters({this.tags,this.startTime,this.length,this.accepted,this.repeats});
+    PostParameters({this.action,this.tag,this.startTime,this.length,this.accepted,this.repeats});
 
-    Duration getLength() {
-      return Duration(days: length.day, hours: length.hour, minutes: length.minute, seconds: length.second);
-    }
+
 
     Map<String, dynamic> toJson() {
       return {
-          "tags": tags,
+          "tag": tag,
           "start_time": startTime.toIso8601String(),
-          "length": length.toIso8601String(),
+          "length": length,
           "accepted": accepted,
           "repeats": repeats
       };
